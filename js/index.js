@@ -2,9 +2,6 @@ const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 const radar = document.querySelector('.radar')
 
-const beep = new Audio('beep-329314.mp3')
-beep.volume = 0.5
-beep.loop = true
 canvas.width = 400
 canvas.height = 400
 
@@ -13,32 +10,101 @@ const cheese = new Cheese();
 let touching = false;
 let moved = false;
 let typeChoosen = false;
-let audioUnlocked = false;
 
-// Función simple para desbloquear audio
-async function unlockAudio() {
-  if (audioUnlocked) return;
+// Web Audio API - Más confiable en iOS PWA
+let audioContext = null;
+let audioBuffer = null;
+let sourceNode = null;
+let isAudioReady = false;
+let isPlaying = false;
+
+// Inicializa Web Audio API
+async function initAudio() {
+  if (isAudioReady) return true;
   
   try {
-    beep.load();
-    await beep.play();
-    beep.pause();
-    beep.currentTime = 0;
-    audioUnlocked = true;
-    console.log('🔊 Audio desbloqueado');
+    // Crea el contexto de audio (compatible con Safari)
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    // Resume el contexto si está suspendido (iOS lo requiere)
+    if (audioContext.state === 'suspended') {
+      await audioContext.resume();
+    }
+    
+    // Carga el archivo de audio
+    const response = await fetch('beep-329314.mp3');
+    const arrayBuffer = await response.arrayBuffer();
+    audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    
+    isAudioReady = true;
+    console.log('🔊 Audio Web API listo');
+    return true;
   } catch (error) {
-    console.log('Audio se desbloqueará en el próximo toque');
+    console.log('Error inicializando audio:', error);
+    return false;
   }
 }
 
-// Intenta desbloquear en CUALQUIER interacción
-document.addEventListener('touchstart', unlockAudio);
-document.addEventListener('touchend', unlockAudio);
-document.addEventListener('mousedown', unlockAudio);
-document.addEventListener('click', unlockAudio);
+// Reproduce el beep en loop
+function playBeep() {
+  if (!isAudioReady || !audioBuffer || isPlaying) return;
+  
+  try {
+    // Crea un source node
+    sourceNode = audioContext.createBufferSource();
+    sourceNode.buffer = audioBuffer;
+    sourceNode.loop = true; // Loop infinito
+    
+    // Control de volumen
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 0.5; // Volumen al 50%
+    
+    // Conecta: source -> gain -> destination
+    sourceNode.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Reproduce
+    sourceNode.start(0);
+    isPlaying = true;
+    console.log('🔊 Beep iniciado');
+  } catch (error) {
+    console.log('Error reproduciendo beep:', error);
+    isPlaying = false;
+  }
+}
+
+// Detiene el beep
+function stopBeep() {
+  if (!isPlaying || !sourceNode) return;
+  
+  try {
+    sourceNode.stop();
+    sourceNode.disconnect();
+    sourceNode = null;
+    isPlaying = false;
+    console.log('🔇 Beep detenido');
+  } catch (error) {
+    console.log('Error deteniendo beep:', error);
+  }
+}
+
+// Inicializa el audio con cualquier interacción del usuario
+const initOnTouch = async () => {
+  const success = await initAudio();
+  if (success) {
+    // Remueve los listeners una vez inicializado
+    document.removeEventListener('touchstart', initOnTouch);
+    document.removeEventListener('touchend', initOnTouch);
+    document.removeEventListener('click', initOnTouch);
+  }
+};
+
+document.addEventListener('touchstart', initOnTouch);
+document.addEventListener('touchend', initOnTouch);
+document.addEventListener('click', initOnTouch);
 
 // También intenta al cargar
-window.addEventListener('load', unlockAudio);
+window.addEventListener('load', initAudio);
 
 function animate() {
   requestAnimationFrame(animate)
@@ -49,18 +115,14 @@ function animate() {
   if (touching) {
     radar.style.opacity = '1'
     
-    // Intenta desbloquear si aún no está
-    if (!audioUnlocked) {
-      unlockAudio();
+    // Intenta inicializar audio si no está listo
+    if (!isAudioReady) {
+      initAudio();
     }
     
-    // Inicia el beep continuo si está pausado
-    if (beep.paused && audioUnlocked) {
-      beep.play().catch(error => {
-        console.log('Error reproduciendo beep:', error);
-        // Intenta desbloquear de nuevo
-        audioUnlocked = false;
-      });
+    // Reproduce el beep si está listo y no está sonando
+    if (isAudioReady && !isPlaying) {
+      playBeep();
     }
     
     if(moved){
@@ -77,9 +139,8 @@ function animate() {
     radar.style.opacity = '0'
     
     // Detiene el beep cuando dejas de tocar
-    if (!beep.paused) {
-      beep.pause();
-      beep.currentTime = 0;
+    if (isPlaying) {
+      stopBeep();
     }
   }
 }
