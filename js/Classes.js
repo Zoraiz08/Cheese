@@ -44,8 +44,8 @@ class Cheese {
 
 draw(c) {
   if (!this.img.complete) return  // <-- asegura que ya cargó
-  c.fillStyle = 'rgba(255, 255, 255, 0.5)'
-  c.fillRect(this.x, this.y, this.width, this.height)
+//   c.fillStyle = 'rgba(255, 255, 255, 0.5)'
+//   c.fillRect(this.x, this.y, this.width, this.height)
   c.drawImage(this.img, this.x, this.y, this.width, this.height)
 }
 

@@ -1,23 +1,16 @@
 let lastX = null;
 let lastY = null;
+const threshold = 10; 
+let touching = false;
+let moved = false;
 
-const threshold = 10; // píxeles mínimos de diferencia para considerarlo "grande"
-
-// Touch events
 window.addEventListener('touchstart', (event) => {
-    touching = true
-      beep.play().then(() => {
-            beep.pause();
-            beep.currentTime = 0;
-            console.log("Audio desbloqueado en iOS");
-     });
-}, { once: true }); // Solo la primera vez
+  touching = true;
+  const touch = event.touches[0];
+  lastX = touch.clientX; // reinicia aquí
+  lastY = touch.clientY;
+});
 
-window.addEventListener('mousedown', (event) => {
-    touching = true
-})
-
-// mouse move and touch move events
 window.addEventListener('touchmove', (event) => {
   const touch = event.touches[0];
   if (lastX !== null && lastY !== null) {
@@ -34,6 +27,15 @@ window.addEventListener('touchmove', (event) => {
   lastY = touch.clientY;
 });
 
+window.addEventListener('touchend', () => {
+  touching = false;
+  lastX = null;  // reset aquí también
+  lastY = null;
+});
+
+window.addEventListener('mousedown', (event) => {
+    touching = true
+})
 
 window.addEventListener("mousemove", (e) => {
   if (lastX !== null && lastY !== null) {
@@ -52,10 +54,6 @@ window.addEventListener("mousemove", (e) => {
   lastY = e.clientY;
 });
 
-// Mouse up and touch end events
-window.addEventListener('touchend', (event) => {
-    touching = false
-})
 window.addEventListener('mouseup', (event) => {
     touching = false
 })
