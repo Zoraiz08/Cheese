@@ -25,6 +25,7 @@ function animate() {
   if(moved && touching){
     cheese.draw(c)
   }
-
+//   eventListeners.
+  console.log("Estado de la interacción:", { touching, moved });
 }
 animate()
