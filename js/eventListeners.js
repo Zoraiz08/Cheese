@@ -36,8 +36,7 @@ window.addEventListener('touchmove', (event) => {
 
 window.addEventListener('touchend', () => {
   touching = false;
-  lastX = null;  // reset aquí también
-  lastY = null;
+  // NO reseteamos lastX / lastY aquí
 });
 
 window.addEventListener('mousedown', (event) => {
