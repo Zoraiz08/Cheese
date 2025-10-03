@@ -9,12 +9,12 @@ window.addEventListener('touchstart', (event) => {
   lastX = touch.clientX; // reinicia aquí
   lastY = touch.clientY;
 
-//   beep.play().then(() => {
-//             beep.pause();
-//             beep.currentTime = 0;
-//             console.log("Audio desbloqueado en iOS");
-//      });
-// }, { once: true 
+  beep.play().then(() => {
+            beep.pause();
+            beep.currentTime = 0;
+            console.log("Audio desbloqueado en iOS");
+     });
+}, { once: true 
 
 });
 
