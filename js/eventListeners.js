@@ -1,8 +1,7 @@
 let lastX = null;
 let lastY = null;
 const threshold = 10; 
-let touching = false;
-let moved = false;
+
 
 window.addEventListener('touchstart', (event) => {
   touching = true;
