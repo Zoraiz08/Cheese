@@ -21,30 +21,45 @@ class Cheese {
         Cheddar: new Image()
     }
     this.type.Babibel.src = 'img/cheese/Babibel.png'
-    // this.type.Manchego.src = 'img/cheese/Manchego.png'
-    // this.type.Parmesano.src = 'img/cheese/Parmesano.png'
-    // this.type.Roquefort.src = 'img/cheese/Roquefort.png'
-    // this.type.Brie.src = 'img/cheese/Brie.png'
-    // this.type.Camembert.src = 'img/cheese/Camembert.png'
-    // this.type.Gouda.src = 'cheese/Gouda.png'
-    // this.type.Edam.src = 'cheese/Edam.png'
-    // this.type.Cheddar.src = 'cheese/Cheddar.png'
+    this.type.Manchego.src = 'img/cheese/Manchego.png'
+    this.type.Parmesano.src = 'img/cheese/Parmesano.png'
+    this.type.Roquefort.src = 'img/cheese/Roquefort.png'
+    this.type.Brie.src = 'img/cheese/Brie.png'
+    this.type.Camembert.src = 'img/cheese/Camembert.png'
+    this.type.Edam.src = 'img/cheese/Edam.png'
+    this.type.Cheddar.src = 'img/cheese/Cheddar.png'
 
     this.img = this.type.Babibel
 
-    this.img.onload = () => {
-      // Image loaded, you can perform any additional setup here if needed
-    this.loaded = true
+    Object.values(this.type).forEach(image => {
+    image.onload = () => {
+        this.loaded = true
     }
+    image.onerror = () => {
+        console.error("Error al cargar imagen:", image.src)
+    }
+    })
   }
 
 
-  draw(c) {
-    if (!this.loaded) return
-    c.fillStyle = 'rgba(255, 255, 255, 0.5)'
-    c.fillRect(this.x, this.y, this.width, this.height)
-    c.drawImage(this.img, this.x, this.y, this.width, this.height)
-   }
-}   // 
+draw(c) {
+  if (!this.img.complete) return  // <-- asegura que ya cargó
+  c.fillStyle = 'rgba(255, 255, 255, 0.5)'
+  c.fillRect(this.x, this.y, this.width, this.height)
+  c.drawImage(this.img, this.x, this.y, this.width, this.height)
+}
 
 
+   chooseType() {
+    typeChoosen = true;
+    const types = Object.keys(this.type);
+    const randomIndex = Math.floor(Math.random() * types.length);
+    const type = types[randomIndex];
+    
+    if (this.type[type]) {
+        this.img = this.type[type];
+    } else {
+        console.error("Tipo de queso no válido:", type);
+    }
+    }
+}

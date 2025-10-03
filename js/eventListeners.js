@@ -16,6 +16,7 @@ window.addEventListener('touchstart', (event) => {
 window.addEventListener('mousedown', (event) => {
     touching = true
 })
+
 // mouse move and touch move events
 window.addEventListener('touchmove', (event) => {
   const touch = event.touches[0];
