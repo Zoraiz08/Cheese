@@ -2,8 +2,8 @@ const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
 const beep = new Audio('beep-329314.mp3')
-canvas.width = 576
-canvas.height = 576
+canvas.width = 500
+canvas.height = 500
 
 c.fillStyle = 'white'
 c.fillRect(0, 0, canvas.width, canvas.height)
