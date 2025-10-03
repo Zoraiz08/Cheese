@@ -28,7 +28,6 @@ window.addEventListener('touchmove', (event) => {
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance > threshold) {
-      console.log("Movimiento grande detectado:", distance);
       moved = true;
     }
   }
@@ -54,7 +53,6 @@ window.addEventListener("mousemove", (e) => {
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     if (distance > threshold) {
-      console.log("Movimiento grande detectado:", distance);
       moved = true;
     }
   }

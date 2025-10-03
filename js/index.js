@@ -4,8 +4,8 @@ const radar = document.querySelector('.radar')
 
 const beep = new Audio('beep-329314.mp3')
 beep.volume = 0.5
-canvas.width = 500
-canvas.height = 500
+canvas.width = 400
+canvas.height = 400
 
 c.fillStyle = 'white'
 c.fillRect(0, 0, canvas.width, canvas.height)
@@ -23,20 +23,24 @@ function animate() {
   c.fillRect(0, 0, canvas.width, canvas.height)
 
   if (touching) {
-    radar.style.opacity = '1'
+    radar.style.opacity = '1' // animar
     beep.play()
+    if(moved){
+        if (typeChoosen === false) {
+            cheese.chooseType()
+        }
+        cheese.draw(c)
+        radar.style.opacity = '0.5' // animar
+    }
+
+
+
   } else {
     moved = false
     typeChoosen = false
-    radar.style.opacity = '0'
+    radar.style.opacity = '0' // animar
   }
 
-  if(moved && touching){
-    if (typeChoosen === false) {
-        cheese.chooseType()
-    }
-    cheese.draw(c)
-    }
 
 }
 animate()

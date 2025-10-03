@@ -1,9 +1,8 @@
 class Cheese {
-  constructor({ x, y,}) {
-    this.x = x
-    this.y = y
-    this.width = 400
-    this.height = 400
+  constructor() {
+
+    this.width = 200;
+    this.height = 200;
     this.center = {
       x: this.x + this.width / 2,
       y: this.y + this.height / 2,
@@ -45,8 +44,8 @@ class Cheese {
 draw(c) {
   if (!this.img.complete) return  // <-- asegura que ya cargó
 //   c.fillStyle = 'rgba(255, 255, 255, 0.5)'
-//   c.fillRect(this.x, this.y, this.width, this.height)
-  c.drawImage(this.img, this.x, this.y, this.width, this.height)
+//   c.fillRect((canvas.width - this.width) / 2, (canvas.height - this.height) / 2, this.width, this.height)
+  c.drawImage(this.img, (canvas.width - this.width) / 2, (canvas.height - this.height) / 2, this.width, this.height)
 }
 
 
