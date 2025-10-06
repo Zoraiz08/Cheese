@@ -21,21 +21,21 @@ let isPlaying = false;
 // Inicializa Web Audio API
 async function initAudio() {
   if (isAudioReady) return true;
-  
+
   try {
     // Crea el contexto de audio (compatible con Safari)
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    
+
     // Resume el contexto si está suspendido (iOS lo requiere)
     if (audioContext.state === 'suspended') {
       await audioContext.resume();
     }
-    
+
     // Carga el archivo de audio
     const response = await fetch('beep-329314.mp3');
     const arrayBuffer = await response.arrayBuffer();
     audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-    
+
     isAudioReady = true;
     console.log('🔊 Audio Web API listo');
     return true;
@@ -48,21 +48,21 @@ async function initAudio() {
 // Reproduce el beep en loop
 function playBeep() {
   if (!isAudioReady || !audioBuffer || isPlaying) return;
-  
+
   try {
     // Crea un source node
     sourceNode = audioContext.createBufferSource();
     sourceNode.buffer = audioBuffer;
     sourceNode.loop = true; // Loop infinito
-    
+
     // Control de volumen
     const gainNode = audioContext.createGain();
-    gainNode.gain.value = 0.5; // Volumen al 50%
-    
+    gainNode.gain.value = 1; // Volumen al 100%
+
     // Conecta: source -> gain -> destination
     sourceNode.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    
+
     // Reproduce
     sourceNode.start(0);
     isPlaying = true;
@@ -76,7 +76,7 @@ function playBeep() {
 // Detiene el beep
 function stopBeep() {
   if (!isPlaying || !sourceNode) return;
-  
+
   try {
     sourceNode.stop();
     sourceNode.disconnect();
@@ -114,17 +114,17 @@ function animate() {
 
   if (touching) {
     radar.style.opacity = '1'
-    
+
     // Intenta inicializar audio si no está listo
     if (!isAudioReady) {
       initAudio();
     }
-    
+
     // Reproduce el beep si está listo y no está sonando
     if (isAudioReady && !isPlaying) {
       playBeep();
     }
-    
+
     if(moved){
         if (typeChoosen === false) {
             cheese.chooseType()
@@ -137,7 +137,7 @@ function animate() {
     moved = false
     typeChoosen = false
     radar.style.opacity = '0'
-    
+
     // Detiene el beep cuando dejas de tocar
     if (isPlaying) {
       stopBeep();
